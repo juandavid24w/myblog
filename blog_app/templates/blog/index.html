@@ -19,4 +19,16 @@
             <p>{{ post.body | slice:":400" }}...</p>
         {% endfor %}
     {% endblock posts %}
+
+    <h3>Create a post:</h3>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            {{ form.title }}
+        </div>
+        <div>
+            {{ form.body }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 {% endblock page_content %}
