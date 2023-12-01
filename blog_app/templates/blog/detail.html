@@ -15,6 +15,9 @@
     </small>
     <p>{{ post.body | linebreaks }}</p>
 
+    <a href="{% url 'update_blog' post.id %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'delete_blog' post.id %}" class="btn btn-danger">Delete</a>
+
     <h3>Comments:</h3>
     {% for comment in comments %}
         <p>

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    <h2>Create a blog</h2>
+{% endblock page_title %}
+
+{% block page_content %}
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            {{ form.title }}
+        </div>
+        <div>
+            {{ form.body }}
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+{% endblock page_content %}
