@@ -7,9 +7,16 @@
   </head>
   <body>
     <h1>My Personal Blog</h1>
-    <a href="{% url 'blog_index' %}">Home</a>
-    <a href="{% url 'create_blog' %}">Create</a>
-    <hr>
+    {% if user.is_authenticated %}
+      <div class="d-flex">
+        <a style="margin: 0 10px;" href="{% url 'blog_index' %}">Home</a>
+        <a style="margin: 0 10px;" href="{% url 'user_blogs' %}">My Blogs</a>
+        <a style="margin: 0 10px;" href="{% url 'create_blog' %}">Create</a>
+        <a style="margin: 0 10px;" href="{% url 'logout' %}">Logout</a>
+      </div>
+      <hr>
+    {% endif %}  
+    
     {% block page_title %}{% endblock page_title %}
     {% block page_content %}{% endblock page_content %}
   </body>

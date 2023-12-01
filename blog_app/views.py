@@ -1,28 +1,41 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from blog_app.models import Post, Comment
 from blog_app.forms import CommentForm, PostForm
 
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('/')
+    
+    form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+@login_required
 def blog_index(request):
     posts = Post.objects.all().order_by('-created_on')
-
-    form = PostForm()
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = Post(
-                title=form.cleaned_data['title'],
-                body=form.cleaned_data['body'],
-            )
-            post.save()
-            return HttpResponseRedirect(request.path_info)
-
     context = {
         'posts': posts,
     }
     return render(request, 'blog/index.html', context)
 
+@login_required
+def get_user_blogs(request):
+    posts = Post.objects.filter(author=request.user).order_by('-created_on')
+
+    context = {
+        'posts': posts,
+    }
+    return render(request, 'blog/my-blogs.html', context)
+
+@login_required
 def create_blog(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
@@ -31,6 +44,7 @@ def create_blog(request):
             post = Post(
                 title=form.cleaned_data['title'],
                 body=form.cleaned_data['body'],
+                author=request.user
             )
             post.save()
 
@@ -44,6 +58,7 @@ def create_blog(request):
     }
     return render(request, 'blog/create.html', context)
 
+@login_required
 def update_blog(request, id):
     post = Post.objects.get(id=id)
 
@@ -66,10 +81,12 @@ def update_blog(request, id):
     }
     return render(request, 'blog/update.html', context)
 
+@login_required
 def delete_blog(request, id):
     Post.objects.get(id=id).delete()
     return HttpResponseRedirect(reverse('blog_index'))
 
+@login_required
 def blog_category(request, category):
     posts = Post.objects.filter(
         categories__name__contains=category
@@ -80,6 +97,7 @@ def blog_category(request, category):
     }
     return render(request, 'blog/category.html', context)
 
+@login_required
 def blog_detail(request, id):
     post = Post.objects.get(id=id)
     form = CommentForm()
