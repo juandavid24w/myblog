@@ -9,12 +9,7 @@
         {% for post in posts %}
             <h3><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h3>
             <small>
-                {{ post.created_on.date }} | Categories:
-                {% for category in post.categories.all %}
-                    <a href="{% url 'blog_category' category.name %}">
-                        {{ category.name }}
-                    </a>
-                {% endfor %}
+                {{ post.created_on.date }} Created by: {{ post.author }}
             </small>
             <p>{{ post.body | slice:":400" }}...</p>
         {% endfor %}

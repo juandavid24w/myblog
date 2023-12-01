@@ -87,17 +87,6 @@ def delete_blog(request, id):
     return HttpResponseRedirect(reverse('blog_index'))
 
 @login_required
-def blog_category(request, category):
-    posts = Post.objects.filter(
-        categories__name__contains=category
-    ).order_by('-created_on')
-    context = {
-        'category': category,
-        'posts': posts,
-    }
-    return render(request, 'blog/category.html', context)
-
-@login_required
 def blog_detail(request, id):
     post = Post.objects.get(id=id)
     form = CommentForm()
@@ -105,7 +94,7 @@ def blog_detail(request, id):
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = Comment(
-                author=form.cleaned_data['author'],
+                author=request.user,
                 body=form.cleaned_data['body'],
                 post=post,
             )

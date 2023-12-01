@@ -6,17 +6,15 @@
 
 {% block page_content %}
     <small>
-        {{ post.created_on.date }} | Categories:
-        {% for category in post.categories.all %}
-            <a href="{% url 'blog_category' category.name %}">
-                {{ category.name }}
-            </a>
-        {% endfor %}
+        {{ post.created_on.date }} Created by: {{ post.author }}
     </small>
     <p>{{ post.body | linebreaks }}</p>
-
-    <a href="{% url 'update_blog' post.id %}" class="btn btn-primary">Edit</a>
-    <a href="{% url 'delete_blog' post.id %}" class="btn btn-danger">Delete</a>
+    <div class="d-flex">
+        {% if post.author == user %}
+            <a class="button" href="{% url 'update_blog' post.id %}" class="btn btn-primary">Edit</a>
+            <a class="button" href="{% url 'delete_blog' post.id %}" class="btn btn-danger">Delete</a>
+        {% endif %}
+    </div>
 
     <h3>Comments:</h3>
     {% for comment in comments %}
@@ -31,9 +29,6 @@
     <h3>Leave a comment:</h3>
     <form method="post">
         {% csrf_token %}
-        <div>
-            {{ form.author }}
-        </div>
         <div>
             {{ form.body }}
         </div>
